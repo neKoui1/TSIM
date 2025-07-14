@@ -29,7 +29,7 @@ export class User extends Model<IUser, IUserCreate> implements IUser {
   username!: string;
 
   @Column({
-    type: DataType.STRING(100),
+    type: DataType.STRING(255),
     allowNull: false,
     unique: true,
   })

@@ -19,5 +19,8 @@ export class UserService {
     return await User.findAll();
   }
 
-  async createUser(userData: IUserCreate): Promise<IUser> {}
+  // service层中仅保存用户数据，因此未对userData中的敏感数据如password, email等进行加密
+  async createUser(userData: IUserCreate): Promise<IUser> {
+    return await User.create(userData);
+  }
 }
