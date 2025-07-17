@@ -1,7 +1,9 @@
 import bcrypt from "bcryptjs";
+import crypto from "crypto";
 
 export class EncryptionUtil {
   private static readonly SALT_ROUNDS = 10;
+  private static readonly EMAIL_SALT = "email-salt";
 
   // 密码哈希
   // 使用bcryptjs库进行密码加密，每次加密都会生成不同的hash值
@@ -19,7 +21,11 @@ export class EncryptionUtil {
 
   // 邮箱哈希
   static async hashEmail(email: string): Promise<string> {
-    return await bcrypt.hash(email, this.SALT_ROUNDS);
+    const normalizedEmail = email.toLowerCase().trim();
+    return crypto
+      .createHash("sha256")
+      .update(normalizedEmail + this.EMAIL_SALT)
+      .digest("hex");
   }
 
   // 邮箱验证
@@ -27,6 +33,7 @@ export class EncryptionUtil {
     email: string,
     hashedEmail: string
   ): Promise<boolean> {
-    return await bcrypt.compare(email, hashedEmail);
+    const hash = await this.hashEmail(email.toLowerCase().trim());
+    return hash === hashedEmail;
   }
 }
